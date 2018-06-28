@@ -43,7 +43,7 @@ type GamesResult struct {
 // A Friend is a reference to a Player
 type Friend struct {
 	SteamID     string `json:"steamid"`
-	FriendSince string `json:"friend_since"`
+	FriendSince int    `json:"friend_since"`
 }
 
 type FriendList struct {

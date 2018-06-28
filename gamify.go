@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/softsrv/gamify/steam"
@@ -47,31 +48,36 @@ func Player(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 
 }
 
-// Friends accepts one steamID in the query and
+// Friends accepts one or more steamIDs in the query and
 // returns all friends of that steamID
-func Friends(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Friends(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	//queryValues := r.URL.Query()
 	w.Header().Set("Content-Type", "application/json")
 	var x mockapi.Service
-	fr, err := x.Friends("fakeid")
+	fr, err := x.Friends(params.ByName("id"))
 	if err != nil {
 		fmt.Println(err)
 		fmt.Fprint(w, "failed to fetch friends")
 		return
 	}
 	fmt.Println("here we go")
-	json.NewEncoder(w).Encode(fr)
+	var fID []string
+	for _, item := range fr.Response.Friends {
+		fID = append(fID, item.SteamID)
+	}
+	finalResult, err := x.Players(strings.Join(fID[:], ","))
+	json.NewEncoder(w).Encode(finalResult)
 }
 
 // Games accepts one steamID in the query, and returns
 // all games owned by that steam user
-func Games(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Games(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	//queryValues := r.URL.Query()
 	// to construct url for game icon, use:
 	// http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg
 	w.Header().Set("Content-Type", "application/json")
 	var x mockapi.Service
-	ga, err := x.Games("fakeid")
+	ga, err := x.Games(params.ByName("id"))
 	if err != nil {
 		fmt.Println(err)
 		fmt.Fprint(w, "failed to fetch games")
@@ -88,8 +94,8 @@ func main() {
 	router.GET("/", Index)
 	router.GET("/players", Players)
 	router.GET("/players/:id", Player)
-	router.GET("/friends", Friends)
-	router.GET("/games", Games)
+	router.GET("/players/:id/friends", Friends)
+	router.GET("/players/:id/games", Games)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
