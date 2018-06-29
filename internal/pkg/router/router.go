@@ -1,15 +1,38 @@
-package main
+package router
 
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/softsrv/gamify/steam"
+	"github.com/softsrv/gamify/internal/pkg/mock"
 )
+
+// Service provides access to the route handler
+type Service struct {
+	router *httprouter.Router
+}
+
+//Start defines the router, sets up the routes, and starts the listener
+func (s *Service) Start(port string) error {
+	fmt.Println("wtf")
+	s.router = httprouter.New()
+	s.setRoutes()
+
+	return http.ListenAndServe(port, s.router)
+}
+
+func (s *Service) setRoutes() {
+
+	s.router.GET("/", Index)
+	s.router.GET("/players", Players)
+	s.router.GET("/players/:id", Player)
+	s.router.GET("/players/:id/friends", Friends)
+	s.router.GET("/players/:id/games", Games)
+
+}
 
 //Index displays a basic welcome page
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -85,17 +108,4 @@ func Games(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	}
 	fmt.Println("here we go")
 	json.NewEncoder(w).Encode(ga)
-}
-
-func main() {
-	fmt.Println("hello world")
-
-	router := httprouter.New()
-	router.GET("/", Index)
-	router.GET("/players", Players)
-	router.GET("/players/:id", Player)
-	router.GET("/players/:id/friends", Friends)
-	router.GET("/players/:id/games", Games)
-
-	log.Fatal(http.ListenAndServe(":8080", router))
 }
