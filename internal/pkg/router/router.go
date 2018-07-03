@@ -52,7 +52,6 @@ func Players(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		fmt.Fprint(w, "failed to fetch players")
 		return
 	}
-	fmt.Println("here we go")
 	json.NewEncoder(w).Encode(pl)
 
 }
@@ -68,7 +67,6 @@ func Player(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		fmt.Fprint(w, "failed to fetch players")
 		return
 	}
-	fmt.Println("here we go")
 	json.NewEncoder(w).Encode(pl)
 
 }
@@ -85,7 +83,6 @@ func Friends(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		fmt.Fprint(w, "failed to fetch friends")
 		return
 	}
-	fmt.Println("here we go")
 	var fID []string
 	for _, item := range fr.Response.Friends {
 		fID = append(fID, item.SteamID)
@@ -108,7 +105,6 @@ func Games(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		fmt.Fprint(w, "failed to fetch games")
 		return
 	}
-	fmt.Println("here we go")
 	for i := 0; i < len(ga.Response.Games); i++ {
 		game := &ga.Response.Games[i]
 		game.ImgIconURL = fmt.Sprintf(gameIconURL, game.AppID, game.ImgIconURL)
