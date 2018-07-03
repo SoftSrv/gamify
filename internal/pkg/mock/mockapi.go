@@ -17,12 +17,14 @@ type Player struct {
 	AvatarFull   string `json:"avatarfull"`
 }
 
-type PlayerList struct {
+// PlayersList contains an array of Player objects.
+type PlayersList struct {
 	Players []Player `json:"players"`
 }
 
+// PlayersResult contains a "response" object with relevant data
 type PlayersResult struct {
-	Response PlayerList `json:"response"`
+	Response PlayersList `json:"response"`
 }
 
 // Game contains details about a Steam game
@@ -34,28 +36,33 @@ type Game struct {
 	ImgLogoURL      string `json:"img_logo_url"`
 }
 
-type GameList struct {
+// GamesList contains an array of Game objects
+type GamesList struct {
 	Games []Game `json:"games"`
 }
 
+// GamesResult contains a "response" object with relevant data
 type GamesResult struct {
-	Response GameList `json:"response"`
+	Response GamesList `json:"response"`
 }
 
-// A Friend is a reference to a Player
+// A Friend is a reference to a Player who is friends with a particular user
 type Friend struct {
 	SteamID     string `json:"steamid"`
 	FriendSince int    `json:"friend_since"`
 }
 
-type FriendList struct {
+// FriendsList contains an array of Friend objects
+type FriendsList struct {
 	Friends []Friend `json:"friends"`
 }
 
+// FriendsResult contains a "response" object with relevant data
 type FriendsResult struct {
-	Response FriendList `json:"friendslist"`
+	Response FriendsList `json:"response"`
 }
 
+// Service is the type that owns methods for fetching mock steam data
 type Service struct {
 }
 

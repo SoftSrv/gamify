@@ -10,6 +10,9 @@ import (
 	"github.com/softsrv/gamify/internal/pkg/mock"
 )
 
+// fill in with /{appId}/{hash}
+const gameIconURL = "http://media.steampowered.com/steamcommunity/public/images/apps/%d/%s.jpg"
+
 // Service provides access to the route handler
 type Service struct {
 	router *httprouter.Router
@@ -17,7 +20,6 @@ type Service struct {
 
 //Start defines the router, sets up the routes, and starts the listener
 func (s *Service) Start(port string) error {
-	fmt.Println("wtf")
 	s.router = httprouter.New()
 	s.setRoutes()
 
@@ -97,7 +99,7 @@ func Friends(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 func Games(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	//queryValues := r.URL.Query()
 	// to construct url for game icon, use:
-	// http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg
+	//
 	w.Header().Set("Content-Type", "application/json")
 	var x mockapi.Service
 	ga, err := x.Games(params.ByName("id"))
@@ -107,5 +109,11 @@ func Games(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		return
 	}
 	fmt.Println("here we go")
+	for i := 0; i < len(ga.Response.Games); i++ {
+		game := &ga.Response.Games[i]
+		game.ImgIconURL = fmt.Sprintf(gameIconURL, game.AppID, game.ImgIconURL)
+		game.ImgLogoURL = fmt.Sprintf(gameIconURL, game.AppID, game.ImgLogoURL)
+	}
+
 	json.NewEncoder(w).Encode(ga)
 }
