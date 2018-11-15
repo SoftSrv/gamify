@@ -5,6 +5,7 @@ resources:
     versionTemplate:
       sourceName: SoftSrv/gamify
       branch: master
+      buildOnPullRequest: true
 
 jobs:
   - name: gamify-build-checks
@@ -25,5 +26,3 @@ jobs:
             - ls
             - diff -u <(echo -n) <(gofmt -d ./)
             - go get -u github.com/julienschmidt/httprouter
-
-        
