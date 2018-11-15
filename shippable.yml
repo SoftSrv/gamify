@@ -1,0 +1,28 @@
+resources:
+  - name: gamify-repo
+    type: gitRepo
+    integration: github
+    versionTemplate:
+      sourceName: SoftSrv/gamify
+      branch: master
+      buildOnPullRequest: true
+
+jobs:
+  - name: gamify-build-checks
+    type: runSh
+    allowPublicAccess: true
+    steps:
+      - IN: gamify-repo
+        showBuildStatus: true
+      - TASK:
+          runtime:
+            options:
+              imageName: drydock/u16golall
+              imageTag: v6.10.4
+          script:
+            - which go
+            - go version
+            - pushd $(shipctl get_resource_state gamify-repo)
+            - ls
+            - diff -u <(echo -n) <(gofmt -d ./)
+            - go get -u github.com/julienschmidt/httprouter
