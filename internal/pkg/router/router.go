@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/softsrv/gamify/internal/pkg/mock"
+	"github.com/softsrv/gamify/pkg/steam"
 )
 
 // fill in with /{appId}/{hash}
@@ -45,7 +45,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func Players(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	//queryValues := r.URL.Query()
 	w.Header().Set("Content-Type", "application/json")
-	var x mockapi.Service
+	var x steamapi.Service
 	pl, err := x.Players("fake,id,string")
 	if err != nil {
 		fmt.Println(err)
@@ -60,7 +60,7 @@ func Players(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func Player(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	//queryValues := r.URL.Query()
 	w.Header().Set("Content-Type", "application/json")
-	var x mockapi.Service
+	var x steamapi.Service
 	pl, err := x.Player(params.ByName("id"))
 	if err != nil {
 		fmt.Println(err)
@@ -76,7 +76,7 @@ func Player(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 func Friends(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	//queryValues := r.URL.Query()
 	w.Header().Set("Content-Type", "application/json")
-	var x mockapi.Service
+	var x steamapi.Service
 	fr, err := x.Friends(params.ByName("id"))
 	if err != nil {
 		fmt.Println(err)
@@ -98,7 +98,7 @@ func Games(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	// to construct url for game icon, use:
 	//
 	w.Header().Set("Content-Type", "application/json")
-	var x mockapi.Service
+	var x steamapi.Service
 	ga, err := x.Games(params.ByName("id"))
 	if err != nil {
 		fmt.Println(err)
