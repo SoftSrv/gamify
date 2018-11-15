@@ -1,7 +1,7 @@
 resources:
   - name: gamify-repo
     type: gitRepo
-    integration: github
+    integration: "trriplejay github"
     versionTemplate:
       sourceName: SoftSrv/gamify
       branch: master
