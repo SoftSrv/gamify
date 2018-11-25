@@ -5,7 +5,6 @@ build:
   ci:
     - which go
     - go version
-    - pushd $(shipctl get_resource_state gamify-repo)
     - ls
     - diff -u <(echo -n) <(gofmt -d ./)
     - go get -u github.com/julienschmidt/httprouter    
