@@ -4,9 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
 )
 
 const dataLocation = "internal/pkg/mock/mockdata"
+const baseURL = "https://api.steampowered.com"
+const userService = "ISteamUser"
+const playerService = "IPlayerService"
 
 // Player contains details about the Steam User
 type Player struct {
@@ -64,10 +70,20 @@ type FriendsResult struct {
 
 // Service is the type that owns methods for fetching steam data
 type Service struct {
+	client *http.Client
 }
 
 // Players accepts one or more steamIDs and returns a PlayersResult
-func (m *Service) Players(steamID string) (*PlayersResult, error) {
+func (s *Service) Players(steamID string) (*PlayersResult, error) {
+	req, err := http.NewRequest(
+		http.MethodGet,
+		baseURL+"/"+userService+"/"+"/GetPlayerSummaries/v0002"+url.Values{
+			"steamids": {steamID},
+			"key":      {os.Getenv("STEAM_WEBAPI_KEY")},
+		}.Encode(),
+		nil,
+	)
+	req.Header.Add("Content-Type", "application/json")
 	rawPlayers, err := ioutil.ReadFile(dataLocation + "/players.json")
 	if err != nil {
 		return nil, err
@@ -81,7 +97,7 @@ func (m *Service) Players(steamID string) (*PlayersResult, error) {
 }
 
 // Player accepts one steamID and returns that player's object
-func (m *Service) Player(steamID string) (*Player, error) {
+func (s *Service) Player(steamID string) (*Player, error) {
 	rawPlayers, err := ioutil.ReadFile(dataLocation + "/players.json")
 	if err != nil {
 		return nil, err
@@ -101,7 +117,7 @@ func (m *Service) Player(steamID string) (*Player, error) {
 }
 
 // Games accepts one or more steamIDs and returns a GamesResult
-func (m *Service) Games(steamIDs string) (*GamesResult, error) {
+func (s *Service) Games(steamIDs string) (*GamesResult, error) {
 	rawGames, err := ioutil.ReadFile(dataLocation + "/games.json")
 	if err != nil {
 		return nil, err
@@ -115,7 +131,7 @@ func (m *Service) Games(steamIDs string) (*GamesResult, error) {
 }
 
 // Friends accepts a steamID and returns all friends for that ID
-func (m *Service) Friends(steamIDs string) (*FriendsResult, error) {
+func (s *Service) Friends(steamIDs string) (*FriendsResult, error) {
 	rawFriends, err := ioutil.ReadFile(dataLocation + "/friends.json")
 	if err != nil {
 		return nil, err
