@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
@@ -45,8 +46,8 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func Players(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	//queryValues := r.URL.Query()
 	w.Header().Set("Content-Type", "application/json")
-	var x steamapi.Service
-	pl, err := x.Players("fake,id,string")
+	x := steamapi.NewService(os.Getenv("STEAM_WEBAPI_KEY"))
+	pl, err := x.Players("xxx,yyy,zzz") // will come from query params in the future
 	if err != nil {
 		fmt.Println(err)
 		fmt.Fprint(w, "failed to fetch players")
