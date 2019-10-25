@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/softsrv/gamify/pkg/router"
+	"github.com/softsrv/gamify/internal/router"
 )
 
 func main() {
