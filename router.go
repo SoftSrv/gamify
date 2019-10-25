@@ -44,17 +44,19 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // Players returns a list of steam players to the caller
 func Players(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	//queryValues := r.URL.Query()
+	queryValues := r.URL.Query()
+	steamIDs := strings.Split(queryValues.Get("steamIDs"), ",")
+	// data, _ := ioutil.ReadAll(queryValues)
+	fmt.Println(steamIDs)
 	w.Header().Set("Content-Type", "application/json")
 	x := steamapi.NewService(os.Getenv("STEAM_WEBAPI_KEY"))
-	pl, err := x.Players("xxx,yyy,zzz") // will come from query params in the future
+	pl, err := x.Players(steamIDs) // will come from query params in the future
 	if err != nil {
 		fmt.Println(err)
 		fmt.Fprint(w, "failed to fetch players")
 		return
 	}
 	json.NewEncoder(w).Encode(pl)
-
 }
 
 // Player returns a single steam player to the caller based on steamID
@@ -88,7 +90,7 @@ func Friends(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	for _, item := range fr.Response.Friends {
 		fID = append(fID, item.SteamID)
 	}
-	finalResult, err := x.Players(strings.Join(fID[:], ","))
+	finalResult, err := x.Players(fID)
 	json.NewEncoder(w).Encode(finalResult)
 }
 
